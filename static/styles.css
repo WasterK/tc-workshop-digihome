@@ -1,0 +1,92 @@
+/* Custom CSS for the responsive design */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 0;
+}
+
+.blue-text {
+    color: #0074D9;
+}
+
+.green-text {
+    color: #2ECC40;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+section {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+
+.sensor {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+button {
+    background-color: #0074D9;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    position: absolute;
+}
+
+button#refresh-button {
+    padding: 10px 17px;
+    background-color: #0074D9;
+    color: white;
+    top: 20px; /* Adjust the top position to separate it from the header */
+    right: 70px; /* Adjust the right position to place it in the top right corner */
+}
+
+button#add-room-button {
+    padding: 10px 10px;
+    background-color: #2ECC40;
+    top: 60px; /* Adjust the top position to separate it from the header */
+    right: 70px; /* Adjust the right position to place it in the top right corner */
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    main {
+        padding: 10px;
+    }
+
+    .sensor {
+        padding: 10px;
+    }
+}
