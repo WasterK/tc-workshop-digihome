@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Function to update temperature and humidity values
     function updateValues(temperature, humidity) {
-        document.getElementById('bedroom-temp').innerText = temperature + ' °C';
-        document.getElementById('bedroom-humidity').innerText = humidity + ' %';
+        const roundedTemp = Math.round(temperature * 100) / 100;
+        const roundedHum = Math.round(humidity * 100) / 100
+        document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
+        document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
     }
 
     // Event listener for the "Refresh Data" button
