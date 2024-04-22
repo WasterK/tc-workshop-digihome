@@ -38,22 +38,25 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateChart() {
         temperatureChart.data.datasets[0].data = temperatureData;
         temperatureChart.data.datasets[1].data = humidityData;
+
+        // Update x-axis scale based on data range
+        const minX = Math.min(...temperatureData.map(data => data.x));
+        const maxX = Math.max(...temperatureData.map(data => data.x));
+        const timeRange = maxX - minX;
+
+        if (timeRange < 60 * 1000) {
+            // Less than 1 minute
+            temperatureChart.options.scales.xAxes[0].time.unit = 'second';
+        } else if (timeRange < 60 * 60 * 1000) {
+            // Less than 1 hour
+            temperatureChart.options.scales.xAxes[0].time.unit = 'minute';
+        } else {
+            // Otherwise, default to hours
+            temperatureChart.options.scales.xAxes[0].time.unit = 'hour';
+        }
+
         temperatureChart.update();
     }
-
-    // Event listener for the "Refresh Data" button
-    document.getElementById('refresh-button').addEventListener('click', function() {
-        // Make an AJAX request to the /update-temp-humid API
-        fetch('/update-temp-humid', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                // Update the HTML values and chart with the received data
-                updateValues(data.temperature, data.humidity);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    });
 
     // Initialize the temperature chart
     const ctx = document.getElementById('temperature-chart').getContext('2d');
@@ -83,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 xAxes: [{
                     type: 'time',
                     time: {
-                        unit: 'second'
+                        unit: 'hour', // Default to hours
+                        tooltipFormat: 'MMM D, YYYY, h:mm:ss a'
                     },
                     scaleLabel: {
                         display: true,
@@ -118,17 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error fetching data:', error);
             });
     }
-    document.getElementById('scale-select').addEventListener('change', function() {
-        const scale = this.value;
-        updateChartScale(scale);
-    });
 
-    // Function to update the chart scale
-    function updateChartScale(scale) {
-        const timeUnit = scale === 'hour' ? 'hour' : 'second';
-        temperatureChart.options.scales.xAxes[0].time.unit = timeUnit;
-        temperatureChart.update();
-    }
     // Call the fetchData function every 2 seconds (2000 milliseconds)
     setInterval(fetchData, 2000);
 });
