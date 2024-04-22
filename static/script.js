@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Import necessary modules from Chart.js
-    import { Chart, registerables } from 'chart.js';
-    import 'chartjs-adapter-date-fns'; // Import date-fns adapter
 
     // Register necessary components for Chart.js
     Chart.register(...registerables);
