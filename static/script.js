@@ -1,22 +1,75 @@
 document.addEventListener('DOMContentLoaded', function() {
     let temperatureChart;
+    let humidityChart;
     let temperatureData = [];
     let humidityData = [];
 
+    // Function to update temperature chart data
+    function updateTemperatureChart(temperature) {
+        const roundedTemp = Math.round(temperature * 100) / 100;
+        document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
+
+        // Update temperature chart data
+        temperatureData.push({ x: new Date(), y: temperature });
+
+        // Update statistical analysis and temperature chart
+        updateTemperatureStatistics();
+        updateTemperatureChart();
+    }
+
+    // Function to update humidity chart data
+    function updateHumidityChart(humidity) {
+        const roundedHum = Math.round(humidity * 100) / 100;
+        document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
+
+        // Update humidity chart data
+        humidityData.push({ x: new Date(), y: humidity });
+
+        // Update statistical analysis and humidity chart
+        updateHumidityStatistics();
+        updateHumidityChart();
+    }
+
+    // Function to update temperature chart
+    function updateTemperatureChart() {
+        temperatureChart.data.datasets[0].data = temperatureData;
+        temperatureChart.update();
+    }
+
+    // Function to update humidity chart
+    function updateHumidityChart() {
+        humidityChart.data.datasets[0].data = humidityData;
+        humidityChart.update();
+    }
+
+    // Function to update statistical analysis for temperature
+    function updateTemperatureStatistics() {
+        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
+        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
+    }
+
+    // Function to update statistical analysis for humidity
+    function updateHumidityStatistics() {
+        const avgHumidity = calculateAverage(humidityData.map(data => data.y));
+        document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
+    }
+
+    // Function to calculate average
+    function calculateAverage(data) {
+        if (data.length === 0) return NaN;
+        const sum = data.reduce((acc, val) => acc + val, 0);
+        return sum / data.length;
+    }
+
     // Initialize the temperature chart
-    const ctx = document.getElementById('temperature-chart').getContext('2d');
-    temperatureChart = new Chart(ctx, {
+    const tempCtx = document.getElementById('temperature-chart').getContext('2d');
+    temperatureChart = new Chart(tempCtx, {
         type: 'line',
         data: {
             datasets: [{
                 label: 'Temperature (°C)',
-                data: temperatureData,
+                data: [],
                 borderColor: 'rgba(255, 99, 132, 1)',
-                fill: false
-            }, {
-                label: 'Humidity (%)',
-                data: humidityData,
-                borderColor: 'rgba(54, 162, 235, 1)',
                 fill: false
             }]
         },
@@ -25,13 +78,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'Value'
+                        labelString: 'Temperature (°C)'
                     }
                 }],
                 xAxes: [{
                     type: 'time',
                     time: {
-                        tooltipFormat: 'MMM D, YYYY, h:mm:ss a'
+                        unit: 'second'
                     },
                     scaleLabel: {
                         display: true,
@@ -42,72 +95,63 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Function to update the chart with new data
-    function updateChart(temperature, humidity) {
-        const now = new Date();
-
-        // Update chart data
-        temperatureData.push({ x: now, y: temperature });
-        humidityData.push({ x: now, y: humidity });
-
-        // Limit the number of data points shown on the chart (e.g., 50)
-        const maxDataPoints = 50;
-        if (temperatureData.length > maxDataPoints) {
-            temperatureData.shift();
-            humidityData.shift();
+    // Initialize the humidity chart
+    const humCtx = document.getElementById('humidity-chart').getContext('2d');
+    humidityChart = new Chart(humCtx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Humidity (%)',
+                data: [],
+                borderColor: 'rgba(54, 162, 235, 1)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Humidity (%)'
+                    }
+                }],
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'second'
+                    },
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                    }
+                }]
+            }
         }
-
-        // Update the chart
-        temperatureChart.update();
-
-        // Adjust x-axis scale based on the time range of the data
-        const minX = temperatureData[0].x.getTime();
-        const maxX = temperatureData[temperatureData.length - 1].x.getTime();
-        const timeRange = maxX - minX;
-
-        if (timeRange < 60 * 1000) {
-            // Less than 1 minute
-            temperatureChart.options.scales.xAxes[0].time.unit = 'second';
-        } else if (timeRange < 60 * 60 * 1000) {
-            // Less than 1 hour
-            temperatureChart.options.scales.xAxes[0].time.unit = 'minute';
-        } else {
-            // Otherwise, default to hours
-            temperatureChart.options.scales.xAxes[0].time.unit = 'hour';
-        }
-
-        // Update the chart with the new x-axis scale
-        temperatureChart.update();
-    }
+    });
 
     // Event listener for the "Refresh Data" button
     document.getElementById('refresh-button').addEventListener('click', function() {
-        // Make an AJAX request to the /update-temp-humid API
-        fetch('/update-temp-humid', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                // Update the chart with the received data
-                updateChart(data.temperature, data.humidity);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
+        fetchDataAndUpdateCharts();
     });
 
-    // Function to be called every 2 seconds
-    function fetchData() {
+    // Fetch initial data when the page loads
+    fetchDataAndUpdateCharts();
+
+    // Function to fetch data and update the charts
+    function fetchDataAndUpdateCharts() {
         // Make an AJAX request to the /update-temp-humid API
         fetch('/update-temp-humid', { method: 'GET' })
             .then(response => response.json())
             .then(data => {
-                // Update the chart with the received data
-                updateChart(data.temperature, data.humidity);
+                // Update the charts with the received data
+                updateTemperatureChart(data.temperature);
+                updateHumidityChart(data.humidity);
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }
 
-    // Call the fetchData function every 2 seconds (2000 milliseconds)
-    setInterval(fetchData, 2000);
+    // Function to be called every 2 seconds
+    setInterval(fetchDataAndUpdateCharts, 2000);
 });

@@ -19,19 +19,30 @@
                 <p>Humidity: <span id="bedroom-humidity">-- %</span></p>
             </div>
         </section>
-        <div class="statistics">
+        <section class="statistics">
             <h2>Statistics</h2>
-            <p>Average Temperature: <span id="average-temp">-- °C</span></p>
-            <p>Average Humidity: <span id="average-humidity">-- %</span></p>
-        </div>
-        <div class="chart-container">
-            <select id="scale-select">
-                <option value="second">Seconds</option>
-                <option value="minute">Minutes</option>
-                <option value="hour">Hours</option>
-            </select>            
-            <canvas id="temperature-chart"></canvas>
-        </div>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <p>Average Temperature:</p>
+                    <span id="average-temp">-- °C</span>
+                </div>
+                <div class="grid-item">
+                    <p>Average Humidity:</p>
+                    <span id="average-humidity">-- %</span>
+                </div>
+            </div>
+        </section>
+        <section class="chart-container">
+            <h2>Charts</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <canvas id="temperature-chart"></canvas>
+                </div>
+                <div class="grid-item">
+                    <canvas id="humidity-chart"></canvas>
+                </div>
+            </div>
+        </section>
     </main>
     <button id="refresh-button" class="top-tab-button">Refresh Data</button>
     <script src="static/script.js"></script>
