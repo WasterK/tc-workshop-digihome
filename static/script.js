@@ -22,12 +22,17 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/update-temp-humid', { method: 'GET' })
             .then(response => response.json())
             .then(data => {
+                console.log('Fetched data:', data); // Log fetched data
                 // Update the HTML values and charts with the received data
                 updateValues(data.temperature, data.humidity);
 
                 var time = new Date(); // Current time
                 temperatureData.push({ x: time, y: data.temperature });
                 humidityData.push({ x: time, y: data.humidity });
+
+                // Log data being passed to charts
+                console.log('Temperature data:', temperatureData);
+                console.log('Humidity data:', humidityData);
 
                 // Update the datasets for both temperature and humidity charts
                 temperatureChart.data.datasets[0].data = temperatureData;
