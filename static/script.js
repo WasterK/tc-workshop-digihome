@@ -35,7 +35,7 @@ function fetchDataAndUpdateCharts() {
             humidityData.push({ x: time, y: data.humidity });
 
             // Filter data for the last 30 seconds
-            const thirtySecondsAgo = new Date(time.getTime() - 30 * 1000);
+            const thirtySecondsAgo = new Date(time.getTime() - 600 * 1000);
             temperatureData = temperatureData.filter(item => item.x > thirtySecondsAgo);
             humidityData = humidityData.filter(item => item.x > thirtySecondsAgo);
 
