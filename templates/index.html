@@ -13,14 +13,16 @@
         <h1>DigiHome Dashboard</h1>
     </header>
     <main>
-        <section id="room-container">
-            <div class="sensor">
-                <h2>Bedroom</h2>
-                <p>Temperature: <span id="bedroom-temp">-- &deg;C</span></p>
-                <p>Humidity: <span id="bedroom-humidity">-- %</span></p>
+        <section id="device-section" class="chart-section">
+            <h2>Device Data</h2>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <p>Temperature: <span id="bedroom-temp">-- &deg;C</span></p>
+                    <p>Humidity: <span id="bedroom-humidity">-- %</span></p>
+                </div>
             </div>
         </section>
-        <section class="statistics">
+        <section id="statistics-section" class="chart-section">
             <h2>Statistics</h2>
             <div class="grid-container">
                 <div class="grid-item">
@@ -37,10 +39,10 @@
             <h2>Charts</h2>
             <div class="grid-container">
                 <div class="grid-item">
-                    <canvas id="temperature-chart"></canvas>
+                    <canvas id="temperature-chart" class="chart-item"></canvas>
                 </div>
                 <div class="grid-item">
-                    <canvas id="humidity-chart"></canvas>
+                    <canvas id="humidity-chart" class="chart-item"></canvas>
                 </div>
             </div>
         </section>

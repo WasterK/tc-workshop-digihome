@@ -21,42 +21,40 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('refresh-button').addEventListener('click', fetchDataAndUpdateCharts);
 
     // Function to fetch data and update the charts
-    function fetchDataAndUpdateCharts() {
-        // Make an AJAX request to the /update-temp-humid API
-        fetch('/update-temp-humid', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Fetched data:', data); // Log fetched data
-                // Update the HTML values and charts with the received data
-                updateValues(data.temperature, data.humidity);
+function fetchDataAndUpdateCharts() {
+    // Make an AJAX request to the /update-temp-humid API
+    fetch('/update-temp-humid', { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Fetched data:', data); // Log fetched data
+            // Update the HTML values and charts with the received data
+            updateValues(data.temperature, data.humidity);
 
-                var time = new Date(); // Current time
-                temperatureData.push({ x: time, y: data.temperature });
-                humidityData.push({ x: time, y: data.humidity });
+            var time = new Date(); // Current time
+            temperatureData.push({ x: time, y: data.temperature });
+            humidityData.push({ x: time, y: data.humidity });
 
-                // Log data being passed to charts
-                console.log('Temperature data:', temperatureData);
-                console.log('Humidity data:', humidityData);
+            // Filter data for the last 30 seconds
+            const thirtySecondsAgo = new Date(time.getTime() - 30 * 1000);
+            temperatureData = temperatureData.filter(item => item.x > thirtySecondsAgo);
+            humidityData = humidityData.filter(item => item.x > thirtySecondsAgo);
 
-                // Update the datasets for both temperature and humidity charts
-                temperatureChart.data.datasets[0].data = temperatureData;
-                humidityChart.data.datasets[0].data = humidityData;
+            // Update the datasets for both temperature and humidity charts
+            temperatureChart.data.datasets[0].data = temperatureData;
+            humidityChart.data.datasets[0].data = humidityData;
 
-                // Update chart labels
-                temperatureChart.data.labels.push(time);
-                humidityChart.data.labels.push(time);
+            // Update both charts
+            temperatureChart.update();
+            humidityChart.update();
 
-                // Update both charts
-                temperatureChart.update();
-                humidityChart.update();
+            // Update statistics
+            updateStatistics();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+}
 
-                // Update statistics
-                updateStatistics();
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
 
 
     // Function to update statistical analysis
