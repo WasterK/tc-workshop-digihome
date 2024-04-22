@@ -10,18 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
         const roundedHum = Math.round(humidity * 100) / 100;
         document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
         document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
-        updateStatistics(); // Update average values when device values are updated
     }
 
     // Function to update temperature chart data
     function updateTemperatureChart() {
-        temperatureChart.data.datasets[0].data = temperatureData;
+        const lastMinuteData = filterDataByTime(temperatureData, 60000); // Filter data for the last minute
+        temperatureChart.data.datasets[0].data = lastMinuteData;
+        temperatureChart.options.scales.xAxes[0].time.max = new Date(); // Set max value of x-axis to current time
         temperatureChart.update();
     }
 
     // Function to update humidity chart data
     function updateHumidityChart() {
-        humidityChart.data.datasets[0].data = humidityData;
+        const lastMinuteData = filterDataByTime(humidityData, 60000); // Filter data for the last minute
+        humidityChart.data.datasets[0].data = lastMinuteData;
+        humidityChart.options.scales.xAxes[0].time.max = new Date(); // Set max value of x-axis to current time
         humidityChart.update();
     }
 
@@ -46,19 +49,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Function to update statistical analysis
-    function updateStatistics() {
-        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
-        const avgHumidity = calculateAverage(humidityData.map(data => data.y));
-        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
-        document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
-    }
-
-    // Function to calculate average
-    function calculateAverage(data) {
-        if (data.length === 0) return NaN;
-        const sum = data.reduce((acc, val) => acc + val, 0);
-        return sum / data.length;
+    // Function to filter data by time
+    function filterDataByTime(data, timeLimit) {
+        const now = new Date().getTime();
+        return data.filter(point => now - point.x.getTime() <= timeLimit);
     }
 
     // Initialize the temperature chart
@@ -89,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     scaleLabel: {
                         display: true,
                         labelString: 'Time'
+                    },
+                    ticks: {
+                        maxRotation: 0 // Prevents x-axis labels from rotating
                     }
                 }]
             }
@@ -123,6 +120,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     scaleLabel: {
                         display: true,
                         labelString: 'Time'
+                    },
+                    ticks: {
+                        maxRotation: 0 // Prevents x-axis labels from rotating
                     }
                 }]
             }
