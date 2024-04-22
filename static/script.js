@@ -13,26 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateStatistics();
     }
 
-    // Function to update temperature chart data
-    function updateTemperatureChart() {
-        // const lastMinuteData = filterDataByTime(temperatureData, 60000); // Filter data for the last minute
-        var time = new Date().toLocaleTimeString(); // Current time
-        chart.data.labels.push(time);
-        temperatureChart.data.datasets[0].data = lastMinuteData;
-        // temperatureChart.options.scales.xAxes[0].time.max = new Date(); x// Set max value of x-axis to current time
-        temperatureChart.update();
-    }
-
-    // Function to update humidity chart data
-    function updateHumidityChart() {
-        const lastMinuteData = filterDataByTime(humidityData, 60000); // Filter data for the last minute
-        humidityChart.data.datasets[0].data = lastMinuteData;
-        var time = new Date().toLocaleTimeString(); // Current time
-        chart.data.labels.push(time);
-        humidityChart.options.scales.xAxes[0].time.max = new Date(); // Set max value of x-axis to current time
-        humidityChart.update();
-    }
-
     // Event listener for the "Refresh Data" button
     document.getElementById('refresh-button').addEventListener('click', fetchDataAndUpdateCharts);
 
@@ -44,23 +24,31 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Update the HTML values and charts with the received data
                 updateValues(data.temperature, data.humidity);
-                // temperatureData.push(data.temperature);
-                var time = new Date().toLocaleTimeString(); // Current time
+
+                var time = new Date(); // Current time
+                temperatureData.push({ x: time, y: data.temperature });
+                humidityData.push({ x: time, y: data.humidity });
+
+                // Update the datasets for both temperature and humidity charts
+                temperatureChart.data.datasets[0].data = temperatureData;
+                humidityChart.data.datasets[0].data = humidityData;
+
+                // Update chart labels
                 temperatureChart.data.labels.push(time);
-                temperatureChart.data.datasets[0].data.push(temperature);
-                temperatureChart.update();
-                
-                humidityChart.data.datasets[0].data.push(humidity)
                 humidityChart.data.labels.push(time);
+
+                // Update both charts
+                temperatureChart.update();
                 humidityChart.update();
-                // humidityData.push({ x: new Date(), y: data.humidity });
-                // updateTemperatureChart();
-                // updateHumidityChart();
+
+                // Update statistics
+                updateStatistics();
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }
+
 
     // Function to update statistical analysis
     function updateStatistics() {
@@ -70,11 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
     }
 
-    // Function to filter data by time
-    function filterDataByTime(data, timeLimit) {
-        const now = new Date().getTime();
-        return data.filter(point => now - point.x.getTime() <= timeLimit);
-    }
 
     // Initialize the temperature chart
     const tempCtx = document.getElementById('temperature-chart').getContext('2d');
