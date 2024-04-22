@@ -4,6 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
     let temperatureData = [];
     let humidityData = [];
 
+    // Function to calculate the average of an array of numbers
+    function calculateAverage(numbers) {
+        if (numbers.length === 0) return NaN;
+        const sum = numbers.reduce((acc, curr) => acc + curr, 0);
+        return sum / numbers.length;
+    }
+
     // Function to update temperature and humidity values
     function updateValues(temperature, humidity) {
         const roundedTemp = Math.round(temperature * 100) / 100;
@@ -78,25 +85,22 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             scales: {
-                yAxes: [{
-                    scaleLabel: {
+                y: {
+                    title: {
                         display: true,
-                        labelString: 'Temperature (°C)'
+                        text: 'Temperature (°C)'
                     }
-                }],
-                xAxes: [{
+                },
+                x: {
                     type: 'time',
-                    time: {
-                        unit: 'second'
-                    },
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Time'
+                        text: 'Time'
                     },
                     ticks: {
                         maxRotation: 0 // Prevents x-axis labels from rotating
                     }
-                }]
+                }
             }
         }
     });
@@ -115,25 +119,22 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         options: {
             scales: {
-                yAxes: [{
-                    scaleLabel: {
+                y: {
+                    title: {
                         display: true,
-                        labelString: 'Humidity (%)'
+                        text: 'Humidity (%)'
                     }
-                }],
-                xAxes: [{
+                },
+                x: {
                     type: 'time',
-                    time: {
-                        unit: 'second'
-                    },
-                    scaleLabel: {
+                    title: {
                         display: true,
-                        labelString: 'Time'
+                        text: 'Time'
                     },
                     ticks: {
                         maxRotation: 0 // Prevents x-axis labels from rotating
                     }
-                }]
+                }
             }
         }
     });
