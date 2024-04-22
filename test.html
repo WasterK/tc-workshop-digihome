@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temperature Line Diagram Simulation</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<canvas id="temperatureChart" width="400" height="200"></canvas>
+<script>
+    // Initialize Chart.js
+    var ctx = document.getElementById('temperatureChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Temperature',
+                data: [],
+                borderColor: 'red',
+                backgroundColor: 'transparent',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: false,
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Temperature (°C)'
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Time'
+                    }
+                }]
+            }
+        }
+    });
+
+    // Function to update temperature every 2 seconds
+    function updateTemperature() {
+        var temperature = Math.floor(Math.random() * 100); // Random temperature between 0 and 100
+        var time = new Date().toLocaleTimeString(); // Current time
+        chart.data.labels.push(time);
+        chart.data.datasets[0].data.push(temperature);
+        chart.update();
+        setTimeout(updateTemperature, 2000); // Update every 2 seconds
+    }
+
+    // Initial call to start updating temperature
+    updateTemperature();
+</script>
+</body>
+</html>

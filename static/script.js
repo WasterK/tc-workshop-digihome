@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to update temperature chart data
     function updateTemperatureChart() {
-        const lastMinuteData = filterDataByTime(temperatureData, 60000); // Filter data for the last minute
+        // const lastMinuteData = filterDataByTime(temperatureData, 60000); // Filter data for the last minute
+        var time = new Date().toLocaleTimeString(); // Current time
+        chart.data.labels.push(time);
         temperatureChart.data.datasets[0].data = lastMinuteData;
-        temperatureChart.options.scales.xAxes[0].time.max = new Date(); // Set max value of x-axis to current time
+        // temperatureChart.options.scales.xAxes[0].time.max = new Date(); x// Set max value of x-axis to current time
         temperatureChart.update();
     }
 
@@ -24,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateHumidityChart() {
         const lastMinuteData = filterDataByTime(humidityData, 60000); // Filter data for the last minute
         humidityChart.data.datasets[0].data = lastMinuteData;
+        var time = new Date().toLocaleTimeString(); // Current time
+        chart.data.labels.push(time);
         humidityChart.options.scales.xAxes[0].time.max = new Date(); // Set max value of x-axis to current time
         humidityChart.update();
     }
