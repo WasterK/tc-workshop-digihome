@@ -43,10 +43,18 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 // Update the HTML values and charts with the received data
                 updateValues(data.temperature, data.humidity);
-                temperatureData.push({ x: new Date(), y: data.temperature });
-                humidityData.push({ x: new Date(), y: data.humidity });
-                updateTemperatureChart();
-                updateHumidityChart();
+                // temperatureData.push(data.temperature);
+                var time = new Date().toLocaleTimeString(); // Current time
+                temperatureChart.data.labels.push(time);
+                temperatureChart.data.datasets[0].data.push(temperature);
+                temperatureChart.update();
+                
+                humidityChart.data.datasets[0].data.push(humidity)
+                humidityChart.data.labels.push(time);
+                humidityChart.update();
+                // humidityData.push({ x: new Date(), y: data.humidity });
+                // updateTemperatureChart();
+                // updateHumidityChart();
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
