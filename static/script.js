@@ -9,26 +9,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const roundedHum = Math.round(humidity * 100) / 100;
         document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
         document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
-        temperatureData.push(temperature);
-        humidityData.push(humidity);
 
-        // Update statistical analysis
+        // Update chart data
+        temperatureData.push({ x: new Date(), y: temperature });
+        humidityData.push({ x: new Date(), y: humidity });
+
+        // Update statistical analysis and chart
         updateStatistics();
+        updateChart();
     }
 
     // Function to update statistical analysis
     function updateStatistics() {
-        const avgTemperature = calculateAverage(temperatureData);
-        const avgHumidity = calculateAverage(humidityData);
-        document.getElementById('average-temp').innerText = avgTemperature.toFixed(2) + ' °C';
-        document.getElementById('average-humidity').innerText = avgHumidity.toFixed(2) + ' %';
+        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
+        const avgHumidity = calculateAverage(humidityData.map(data => data.y));
+        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
+        document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
     }
 
     // Function to calculate average
     function calculateAverage(data) {
-        if (data.length === 0) return 0;
+        if (data.length === 0) return NaN;
         const sum = data.reduce((acc, val) => acc + val, 0);
         return sum / data.length;
+    }
+
+    // Function to update the chart with new data
+    function updateChart() {
+        temperatureChart.data.datasets[0].data = temperatureData;
+        temperatureChart.data.datasets[1].data = humidityData;
+        temperatureChart.update();
     }
 
     // Event listener for the "Refresh Data" button
@@ -50,11 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
     temperatureChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [],
             datasets: [{
                 label: 'Temperature (°C)',
                 data: [],
                 borderColor: 'rgba(255, 99, 132, 1)',
+                fill: false
+            }, {
+                label: 'Humidity (%)',
+                data: [],
+                borderColor: 'rgba(54, 162, 235, 1)',
                 fill: false
             }]
         },
@@ -63,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 yAxes: [{
                     scaleLabel: {
                         display: true,
-                        labelString: 'Temperature (°C)'
+                        labelString: 'Value'
                     }
                 }],
                 xAxes: [{
