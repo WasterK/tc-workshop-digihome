@@ -5,29 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/styles.css">
     <title>DigiHome Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
-        <h1><span class="blue-text">Digi</span><span class="green-text">Home</span></h1>
-        <h2>Dashboard</h2>
+        <h1>DigiHome Dashboard</h1>
     </header>
     <main>
         <section id="room-container">
-            <!-- Default rooms -->
             <div class="sensor">
                 <h2>Bedroom</h2>
                 <p>Temperature: <span id="bedroom-temp">-- °C</span></p>
                 <p>Humidity: <span id="bedroom-humidity">-- %</span></p>
             </div>
-            <div class="sensor">
-                <h2>Living Room</h2>
-                <p>Temperature: <span id="living-room-temp">-- °C</span></p>
-                <p>Humidity: <span id="living-room-humidity">-- %</span></p>
-            </div>
-            <!-- Newly added rooms will be inserted here -->
         </section>
+        <div class="statistics">
+            <h2>Statistics</h2>
+            <p>Average Temperature: <span id="average-temp">-- °C</span></p>
+            <p>Average Humidity: <span id="average-humidity">-- %</span></p>
+        </div>
+        <div class="chart-container">
+            <canvas id="temperature-chart"></canvas>
+        </div>
     </main>
-    <button id="add-room-button">Add New Room</button>
     <button id="refresh-button" class="top-tab-button">Refresh Data</button>
     <script src="static/script.js"></script>
 </body>
