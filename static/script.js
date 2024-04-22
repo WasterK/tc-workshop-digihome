@@ -118,7 +118,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error fetching data:', error);
             });
     }
+    document.getElementById('scale-select').addEventListener('change', function() {
+        const scale = this.value;
+        updateChartScale(scale);
+    });
 
+    // Function to update the chart scale
+    function updateChartScale(scale) {
+        const timeUnit = scale === 'hour' ? 'hour' : 'second';
+        temperatureChart.options.scales.xAxes[0].time.unit = timeUnit;
+        temperatureChart.update();
+    }
     // Call the fetchData function every 2 seconds (2000 milliseconds)
     setInterval(fetchData, 2000);
 });
