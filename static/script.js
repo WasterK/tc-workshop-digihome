@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const roundedHum = Math.round(humidity * 100) / 100;
         document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
         document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
+        updateStatistics();
     }
 
     // Function to update temperature chart data
@@ -59,6 +60,14 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
+    }
+
+    // Function to update statistical analysis
+    function updateStatistics() {
+        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
+        const avgHumidity = calculateAverage(humidityData.map(data => data.y));
+        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
+        document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
     }
 
     // Function to filter data by time
