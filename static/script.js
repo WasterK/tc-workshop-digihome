@@ -4,53 +4,53 @@ document.addEventListener('DOMContentLoaded', function() {
     let temperatureData = [];
     let humidityData = [];
 
-    // Function to update temperature chart data
-    function updateTemperatureChart(temperature) {
+    // Function to update temperature and humidity values
+    function updateValues(temperature, humidity) {
         const roundedTemp = Math.round(temperature * 100) / 100;
-        document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
-
-        // Update temperature chart data
-        temperatureData.push({ x: new Date(), y: temperature });
-
-        // Update statistical analysis and temperature chart
-        updateTemperatureStatistics();
-        updateTemperatureChart();
-    }
-
-    // Function to update humidity chart data
-    function updateHumidityChart(humidity) {
         const roundedHum = Math.round(humidity * 100) / 100;
+        document.getElementById('bedroom-temp').innerText = roundedTemp + ' °C';
         document.getElementById('bedroom-humidity').innerText = roundedHum + ' %';
-
-        // Update humidity chart data
-        humidityData.push({ x: new Date(), y: humidity });
-
-        // Update statistical analysis and humidity chart
-        updateHumidityStatistics();
-        updateHumidityChart();
+        updateStatistics(); // Update average values when device values are updated
     }
 
-    // Function to update temperature chart
+    // Function to update temperature chart data
     function updateTemperatureChart() {
         temperatureChart.data.datasets[0].data = temperatureData;
         temperatureChart.update();
     }
 
-    // Function to update humidity chart
+    // Function to update humidity chart data
     function updateHumidityChart() {
         humidityChart.data.datasets[0].data = humidityData;
         humidityChart.update();
     }
 
-    // Function to update statistical analysis for temperature
-    function updateTemperatureStatistics() {
-        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
-        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
+    // Event listener for the "Refresh Data" button
+    document.getElementById('refresh-button').addEventListener('click', fetchDataAndUpdateCharts);
+
+    // Function to fetch data and update the charts
+    function fetchDataAndUpdateCharts() {
+        // Make an AJAX request to the /update-temp-humid API
+        fetch('/update-temp-humid', { method: 'GET' })
+            .then(response => response.json())
+            .then(data => {
+                // Update the HTML values and charts with the received data
+                updateValues(data.temperature, data.humidity);
+                temperatureData.push({ x: new Date(), y: data.temperature });
+                humidityData.push({ x: new Date(), y: data.humidity });
+                updateTemperatureChart();
+                updateHumidityChart();
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     }
 
-    // Function to update statistical analysis for humidity
-    function updateHumidityStatistics() {
+    // Function to update statistical analysis
+    function updateStatistics() {
+        const avgTemperature = calculateAverage(temperatureData.map(data => data.y));
         const avgHumidity = calculateAverage(humidityData.map(data => data.y));
+        document.getElementById('average-temp').innerText = isNaN(avgTemperature) ? '-- °C' : avgTemperature.toFixed(2) + ' °C';
         document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
     }
 
@@ -129,28 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Event listener for the "Refresh Data" button
-    document.getElementById('refresh-button').addEventListener('click', function() {
-        fetchDataAndUpdateCharts();
-    });
-
     // Fetch initial data when the page loads
     fetchDataAndUpdateCharts();
-
-    // Function to fetch data and update the charts
-    function fetchDataAndUpdateCharts() {
-        // Make an AJAX request to the /update-temp-humid API
-        fetch('/update-temp-humid', { method: 'GET' })
-            .then(response => response.json())
-            .then(data => {
-                // Update the charts with the received data
-                updateTemperatureChart(data.temperature);
-                updateHumidityChart(data.humidity);
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
 
     // Function to be called every 2 seconds
     setInterval(fetchDataAndUpdateCharts, 2000);
