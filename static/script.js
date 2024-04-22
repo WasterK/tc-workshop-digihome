@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Import necessary modules from Chart.js
+    import { Chart, registerables } from 'chart.js';
+    import 'chartjs-adapter-date-fns'; // Import date-fns adapter
+
+    // Register necessary components for Chart.js
+    Chart.register(...registerables);
+
     let temperatureChart;
     let humidityChart;
     let temperatureData = [];
     let humidityData = [];
-
-    // Function to calculate the average of an array of numbers
-    function calculateAverage(numbers) {
-        if (numbers.length === 0) return NaN;
-        const sum = numbers.reduce((acc, curr) => acc + curr, 0);
-        return sum / numbers.length;
-    }
 
     // Function to update temperature and humidity values
     function updateValues(temperature, humidity) {
@@ -70,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('average-humidity').innerText = isNaN(avgHumidity) ? '-- %' : avgHumidity.toFixed(2) + ' %';
     }
 
+    // Function to calculate the average of an array of numbers
+    function calculateAverage(numbers) {
+        if (numbers.length === 0) return NaN;
+        const sum = numbers.reduce((acc, curr) => acc + curr, 0);
+        return sum / numbers.length;
+    }
 
     // Initialize the temperature chart
     const tempCtx = document.getElementById('temperature-chart').getContext('2d');
@@ -96,9 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: {
                         display: true,
                         text: 'Time'
-                    },
-                    ticks: {
-                        maxRotation: 0 // Prevents x-axis labels from rotating
                     }
                 }
             }
@@ -130,9 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     title: {
                         display: true,
                         text: 'Time'
-                    },
-                    ticks: {
-                        maxRotation: 0 // Prevents x-axis labels from rotating
                     }
                 }
             }
