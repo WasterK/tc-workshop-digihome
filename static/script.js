@@ -1,8 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Import necessary modules from Chart.js
 
-    // Register necessary components for Chart.js
-    Chart.register(...registerables);
+
 
     let temperatureChart;
     let humidityChart;

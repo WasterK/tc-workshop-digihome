@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="static/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>DigiHome Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script> <!-- Include date adapter -->
 </head>
 <body>
     <header>
@@ -16,7 +16,7 @@
         <section id="room-container">
             <div class="sensor">
                 <h2>Bedroom</h2>
-                <p>Temperature: <span id="bedroom-temp">-- °C</span></p>
+                <p>Temperature: <span id="bedroom-temp">-- &deg;C</span></p>
                 <p>Humidity: <span id="bedroom-humidity">-- %</span></p>
             </div>
         </section>
@@ -25,7 +25,7 @@
             <div class="grid-container">
                 <div class="grid-item">
                     <p>Average Temperature:</p>
-                    <span id="average-temp">-- °C</span>
+                    <span id="average-temp">-- &deg;C</span>
                 </div>
                 <div class="grid-item">
                     <p>Average Humidity:</p>
@@ -46,6 +46,6 @@
         </section>
     </main>
     <button id="refresh-button" class="top-tab-button">Refresh Data</button>
-    <script src="static/script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}" type="module"></script> <!-- Make sure to add type="module" -->
 </body>
 </html>
